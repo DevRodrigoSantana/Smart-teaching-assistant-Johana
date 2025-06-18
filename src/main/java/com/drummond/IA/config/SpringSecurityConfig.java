@@ -1,6 +1,7 @@
 package com.drummond.IA.config;
 
 import com.drummond.IA.jwt.JwtAuthorizationFilter;
+import com.drummond.IA.jwt.JwtUserDetailsService;
 import com.drummond.IA.jwt.JwtauthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,9 +23,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @Configuration
 public class SpringSecurityConfig {
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
         return http.cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
@@ -37,15 +37,16 @@ public class SpringSecurityConfig {
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).addFilterBefore(
-                        jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class
+                        jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class
                 ).exceptionHandling(ex -> ex
                         .authenticationEntryPoint(new JwtauthenticationEntryPoint())
                 ).build();
     }
 
+
     @Bean
-    public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter();
+    public JwtAuthorizationFilter jwtAuthorizationFilter(JwtUserDetailsService detailsService) {
+        return new JwtAuthorizationFilter(detailsService);
     }
 
 

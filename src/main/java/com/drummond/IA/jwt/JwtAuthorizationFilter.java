@@ -17,8 +17,14 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtUserDetailsService detailsService;
+
+    private final JwtUserDetailsService detailsService;
+
+
+    public JwtAuthorizationFilter(JwtUserDetailsService detailsService) {
+        this.detailsService = detailsService;
+    }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

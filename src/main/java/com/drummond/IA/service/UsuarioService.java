@@ -22,6 +22,7 @@ public class UsuarioService {
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
+
         try {
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
             return usuarioRepository.save(usuario);
